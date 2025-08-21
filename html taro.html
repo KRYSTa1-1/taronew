@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таро API - GitHub Pages</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container { 
+            background: rgba(0, 0, 0, 0.8); 
+            padding: 30px; 
+            border-radius: 15px; 
+            margin-top: 50px;
+        }
+        .endpoint { 
+            background: #2d3748; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin: 10px 0; 
+            font-family: monospace;
+            color: #68d391;
+        }
+        .test-btn { 
+            background: #ffd700; 
+            color: black; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        #result { 
+            background: white; 
+            color: black; 
+            padding: 15px; 
+            border-radius: 5px; 
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎴 Таро API на GitHub Pages</h1>
+        
+        <div class="endpoint">
+            📍 URL для StreamElements: 
+            <strong>https://raw.githubusercontent.com/KRYSTa1-1/taronew/refs/heads/main/taronew.js</strong>
+        </div>
+
+        <button class="test-btn" onclick="testTarot()">🧪 Тестировать API</button>
+        
+        <div id="result"></div>
+
+        <div class="endpoint">
+            💫 Команда для StreamElements:<br><br>
+            $(eval 
+            url="https://raw.githubusercontent.com/KRYSTa1-1/taronew/refs/heads/main/taronew.js"; 
+            fetch = "$(customapi " + url + ")"; 
+            card = fetch.@json(@path(.card)); 
+            meaning = fetch.@json(@path(.meaning)); 
+            `$(user), твоя карта: ${card} ➡ ${meaning}`
+            )
+        </div>
+    </div>
+
+    <script src="tarot-api.js"></script>
+    <script>
+        async function testTarot() {
+            try {
+                const response = await fetch('tarot-api.js');
+                const scriptContent = await response.text();
+                
+                // Создаем временный скрипт для выполнения
+                const script = document.createElement('script');
+                script.textContent = scriptContent;
+                document.head.appendChild(script);
+                
+                // Вызываем функцию из загруженного скрипта
+                if (window.getRandomTarot) {
+                    const cardData = window.getRandomTarot();
+                    document.getElementById('result').innerHTML = `
+                        <h3>✅ Случайная карта:</h3>
+                        <p><strong>🎴 Карта:</strong> ${cardData.card}</p>
+                        <p><strong>📖 Значение:</strong> ${cardData.meaning}</p>
+                        <p><strong>🕒 Время:</strong> ${new Date(cardData.timestamp).toLocaleTimeString()}</p>
+                    `;
+                    document.getElementById('result').style.display = 'block';
+                }
+                
+                document.head.removeChild(script);
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <p style="color: red;">❌ Ошибка: ${error.message}</p>
+                `;
+                document.getElementById('result').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
